@@ -9,7 +9,7 @@ package Model;
  *
  * @author langa
  */
-public class Camiao extends Veiculo{
+public class Camiao extends Veiculo {
     
     public Camiao(String matricula, String marca, String modelo, double capacidadeCarga, Proprietario proprietario) {
         super(matricula, marca, modelo, capacidadeCarga, proprietario);

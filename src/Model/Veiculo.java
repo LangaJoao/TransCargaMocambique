@@ -66,6 +66,20 @@ public class Veiculo implements Serializable{
     public void setProprietario(Proprietario proprietario) {
         this.proprietario = proprietario;
     }
-    
-    
+
+    public String getTipo() {
+        if (this instanceof Camiao) {
+            return "Camião";
+        }
+        if (this instanceof Carrinha) {
+            return "Carrinha";
+        }
+        return "Veículo";
+    }
+
+    @Override
+    public String toString() {
+        return getTipo() + " " + matricula + " (" + marca + " " + modelo + ", "
+                + capacidadeCarga + " t) - " + proprietario.getNome();
+    }
 }

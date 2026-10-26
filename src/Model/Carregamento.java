@@ -5,13 +5,16 @@
  */
 package Model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
  *
  * @author langa
  */
-public class Carregamento {
+public class Carregamento implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Cliente cliente;
     private Veiculo veiculo;
@@ -86,7 +89,11 @@ public class Carregamento {
     public void setValorCobrado(double valorCobrado) {
         this.valorCobrado = valorCobrado;
     }
-    
-    
 
+    @Override
+    public String toString() {
+        return data + " | " + cliente.getNome() + " | " + veiculo.getMatricula()
+                + " | " + origem + " → " + destino + " | " + quantidadeMercadoria
+                + " t | " + valorCobrado + " MT";
+    }
 }

@@ -47,5 +47,8 @@ public class Proprietario implements Serializable {
         this.documentoIdentificacao = documentoIdentificacao;
     }
 
-
+    @Override
+    public String toString() {
+        return nome + " [" + documentoIdentificacao + "]";
+    }
 }
