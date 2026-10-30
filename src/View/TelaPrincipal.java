@@ -7,28 +7,15 @@ import Model.Cliente;
 import Model.Proprietario;
 import Model.Veiculo;
 import Service.GestaoTransCarga;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
@@ -36,220 +23,355 @@ public class TelaPrincipal extends JFrame {
 
     private final GestaoTransCarga gestao;
     private final DefaultTableModel modeloTabela;
-    private final JTable tabela;
-    private final JLabel rotuloTitulo;
-    private final JLabel rotuloEstado;
 
     public TelaPrincipal() {
-        super("TransCarga Moçambique");
         this.gestao = new GestaoTransCarga();
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1100, 680);
-        setLocationRelativeTo(null);
-
+        initComponents();
         modeloTabela = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        tabela = new JTable(modeloTabela);
-        tabela.setRowHeight(24);
+        tabela.setModel(modeloTabela);
         tabela.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         tabela.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-
-        rotuloTitulo = new JLabel("Listagem", SwingConstants.LEFT);
         rotuloTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
         rotuloTitulo.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
-
-        rotuloEstado = new JLabel("Pronto. Os dados são gravados em ficheiros de objectos na pasta dados/");
         rotuloEstado.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-
-        setJMenuBar(criarMenu());
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(criarPainelEsquerdo(), BorderLayout.WEST);
-        getContentPane().add(criarPainelCentro(), BorderLayout.CENTER);
-        getContentPane().add(rotuloEstado, BorderLayout.SOUTH);
-
+        rotuloMarca.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        painelBotoes.setBorder(BorderFactory.createEmptyBorder(8, 16, 16, 16));
+        setSize(1100, 680);
+        setLocationRelativeTo(null);
         listarProprietarios();
     }
 
-    private JMenuBar criarMenu() {
-        JMenuBar barra = new JMenuBar();
-
-        JMenu cadastro = new JMenu("Cadastro");
-        cadastro.add(item("Proprietário", new Runnable() {
-            public void run() {
-                dialogoProprietario(false);
-            }
-        }));
-        cadastro.add(item("Veículo", new Runnable() {
-            public void run() {
-                dialogoVeiculo();
-            }
-        }));
-        cadastro.add(item("Cliente", new Runnable() {
-            public void run() {
-                dialogoCliente();
-            }
-        }));
-        cadastro.add(item("Carregamento", new Runnable() {
-            public void run() {
-                dialogoCarregamento();
-            }
-        }));
-
-        JMenu actualizar = new JMenu("Actualizar");
-        actualizar.add(item("Proprietário", new Runnable() {
-            public void run() {
-                dialogoProprietario(true);
-            }
-        }));
-        actualizar.add(item("Veículo", new Runnable() {
-            public void run() {
-                dialogoActualizarVeiculo();
-            }
-        }));
-
-        JMenu listagens = new JMenu("Listagens");
-        listagens.add(item("Proprietários", new Runnable() {
-            public void run() {
-                listarProprietarios();
-            }
-        }));
-        listagens.add(item("Camiões (capacidade crescente)", new Runnable() {
-            public void run() {
-                listarCamioes();
-            }
-        }));
-        listagens.add(item("Carrinhas (capacidade crescente)", new Runnable() {
-            public void run() {
-                listarCarrinhas();
-            }
-        }));
-        listagens.add(item("Clientes", new Runnable() {
-            public void run() {
-                listarClientes();
-            }
-        }));
-        listagens.add(item("Todos os carregamentos", new Runnable() {
-            public void run() {
-                listarCarregamentos();
-            }
-        }));
-        listagens.add(item("Transportes por proprietário", new Runnable() {
-            public void run() {
-                listarPorProprietario();
-            }
-        }));
-        listagens.add(item("Total arrecadado por veículo", new Runnable() {
-            public void run() {
-                consultarTotalVeiculo();
-            }
-        }));
-
-        barra.add(cadastro);
-        barra.add(actualizar);
-        barra.add(listagens);
-        return barra;
-    }
-
-    private JMenuItem item(String texto, final Runnable accao) {
-        JMenuItem mi = new JMenuItem(texto);
-        mi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                accao.run();
+    /** Componentes editáveis na aba Design do NetBeans. */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        menuCadastroItem0 = new javax.swing.JMenuItem();
+        menuCadastroItem0.setText("Proprietário");
+        menuCadastroItem0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCadastroItem0ActionPerformed(evt);
             }
         });
-        return mi;
-    }
-
-    private JPanel criarPainelEsquerdo() {
-        JPanel painel = new JPanel();
-        painel.setPreferredSize(new Dimension(250, 0));
-        painel.setBackground(new Color(18, 52, 86));
-        painel.setLayout(new BorderLayout());
-
-        JLabel marca = new JLabel("<html><b>TransCarga</b><br>Moçambique</html>", SwingConstants.CENTER);
-        marca.setForeground(Color.WHITE);
-        marca.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        marca.setBorder(BorderFactory.createEmptyBorder(24, 12, 24, 12));
-        painel.add(marca, BorderLayout.NORTH);
-
-        JPanel botoes = new JPanel(new GridLayout(0, 1, 8, 8));
-        botoes.setOpaque(false);
-        botoes.setBorder(BorderFactory.createEmptyBorder(8, 16, 16, 16));
-        botoes.add(botaoLateral("Cadastrar proprietário", new Runnable() {
-            public void run() {
-                dialogoProprietario(false);
-            }
-        }));
-        botoes.add(botaoLateral("Cadastrar veículo", new Runnable() {
-            public void run() {
-                dialogoVeiculo();
-            }
-        }));
-        botoes.add(botaoLateral("Cadastrar cliente", new Runnable() {
-            public void run() {
-                dialogoCliente();
-            }
-        }));
-        botoes.add(botaoLateral("Registar carregamento", new Runnable() {
-            public void run() {
-                dialogoCarregamento();
-            }
-        }));
-        botoes.add(botaoLateral("Listar camiões", new Runnable() {
-            public void run() {
-                listarCamioes();
-            }
-        }));
-        botoes.add(botaoLateral("Listar carrinhas", new Runnable() {
-            public void run() {
-                listarCarrinhas();
-            }
-        }));
-        botoes.add(botaoLateral("Carregamentos", new Runnable() {
-            public void run() {
-                listarCarregamentos();
-            }
-        }));
-        botoes.add(botaoLateral("Por proprietário", new Runnable() {
-            public void run() {
-                listarPorProprietario();
-            }
-        }));
-        botoes.add(botaoLateral("Total por veículo", new Runnable() {
-            public void run() {
-                consultarTotalVeiculo();
-            }
-        }));
-
-        JPanel contentor = new JPanel(new BorderLayout());
-        contentor.setOpaque(false);
-        contentor.add(botoes, BorderLayout.NORTH);
-        painel.add(contentor, BorderLayout.CENTER);
-        return painel;
-    }
-
-    private JButton botaoLateral(String texto, final Runnable accao) {
-        JButton b = new JButton(texto);
-        b.setFocusPainted(false);
-        b.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                accao.run();
+        menuCadastroItem1 = new javax.swing.JMenuItem();
+        menuCadastroItem1.setText("Veículo");
+        menuCadastroItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCadastroItem1ActionPerformed(evt);
             }
         });
-        return b;
-    }
+        menuCadastroItem2 = new javax.swing.JMenuItem();
+        menuCadastroItem2.setText("Cliente");
+        menuCadastroItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCadastroItem2ActionPerformed(evt);
+            }
+        });
+        menuCadastroItem3 = new javax.swing.JMenuItem();
+        menuCadastroItem3.setText("Carregamento");
+        menuCadastroItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCadastroItem3ActionPerformed(evt);
+            }
+        });
+        menuCadastro = new javax.swing.JMenu();
+        menuCadastro.setText("Cadastro");
+        menuCadastro.add(menuCadastroItem0);
+        menuCadastro.add(menuCadastroItem1);
+        menuCadastro.add(menuCadastroItem2);
+        menuCadastro.add(menuCadastroItem3);
+        menuActualizarItem0 = new javax.swing.JMenuItem();
+        menuActualizarItem0.setText("Proprietário");
+        menuActualizarItem0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuActualizarItem0ActionPerformed(evt);
+            }
+        });
+        menuActualizarItem1 = new javax.swing.JMenuItem();
+        menuActualizarItem1.setText("Veículo");
+        menuActualizarItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuActualizarItem1ActionPerformed(evt);
+            }
+        });
+        menuActualizar = new javax.swing.JMenu();
+        menuActualizar.setText("Actualizar");
+        menuActualizar.add(menuActualizarItem0);
+        menuActualizar.add(menuActualizarItem1);
+        menuListagensItem0 = new javax.swing.JMenuItem();
+        menuListagensItem0.setText("Proprietários");
+        menuListagensItem0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListagensItem0ActionPerformed(evt);
+            }
+        });
+        menuListagensItem1 = new javax.swing.JMenuItem();
+        menuListagensItem1.setText("Camiões (capacidade crescente)");
+        menuListagensItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListagensItem1ActionPerformed(evt);
+            }
+        });
+        menuListagensItem2 = new javax.swing.JMenuItem();
+        menuListagensItem2.setText("Carrinhas (capacidade crescente)");
+        menuListagensItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListagensItem2ActionPerformed(evt);
+            }
+        });
+        menuListagensItem3 = new javax.swing.JMenuItem();
+        menuListagensItem3.setText("Clientes");
+        menuListagensItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListagensItem3ActionPerformed(evt);
+            }
+        });
+        menuListagensItem4 = new javax.swing.JMenuItem();
+        menuListagensItem4.setText("Todos os carregamentos");
+        menuListagensItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListagensItem4ActionPerformed(evt);
+            }
+        });
+        menuListagensItem5 = new javax.swing.JMenuItem();
+        menuListagensItem5.setText("Transportes por proprietário");
+        menuListagensItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListagensItem5ActionPerformed(evt);
+            }
+        });
+        menuListagensItem6 = new javax.swing.JMenuItem();
+        menuListagensItem6.setText("Total arrecadado por veículo");
+        menuListagensItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListagensItem6ActionPerformed(evt);
+            }
+        });
+        menuListagens = new javax.swing.JMenu();
+        menuListagens.setText("Listagens");
+        menuListagens.add(menuListagensItem0);
+        menuListagens.add(menuListagensItem1);
+        menuListagens.add(menuListagensItem2);
+        menuListagens.add(menuListagensItem3);
+        menuListagens.add(menuListagensItem4);
+        menuListagens.add(menuListagensItem5);
+        menuListagens.add(menuListagensItem6);
+        barraMenu = new javax.swing.JMenuBar();
+        barraMenu.add(menuCadastro);
+        barraMenu.add(menuActualizar);
+        barraMenu.add(menuListagens);
+        setJMenuBar(barraMenu);
+        rotuloMarca = new javax.swing.JLabel();
+        rotuloMarca.setText("<html><b>TransCarga</b><br>Moçambique</html>");
+        rotuloMarca.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        rotuloMarca.setForeground(java.awt.Color.WHITE);
+        rotuloMarca.setPreferredSize(new java.awt.Dimension(250, 100));
+        botaoLateral0 = new javax.swing.JButton();
+        botaoLateral0.setText("Cadastrar proprietário");
+        botaoLateral0.setFocusPainted(false);
+        botaoLateral0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral0ActionPerformed(evt);
+            }
+        });
+        botaoLateral1 = new javax.swing.JButton();
+        botaoLateral1.setText("Cadastrar veículo");
+        botaoLateral1.setFocusPainted(false);
+        botaoLateral1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral1ActionPerformed(evt);
+            }
+        });
+        botaoLateral2 = new javax.swing.JButton();
+        botaoLateral2.setText("Cadastrar cliente");
+        botaoLateral2.setFocusPainted(false);
+        botaoLateral2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral2ActionPerformed(evt);
+            }
+        });
+        botaoLateral3 = new javax.swing.JButton();
+        botaoLateral3.setText("Registar carregamento");
+        botaoLateral3.setFocusPainted(false);
+        botaoLateral3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral3ActionPerformed(evt);
+            }
+        });
+        botaoLateral4 = new javax.swing.JButton();
+        botaoLateral4.setText("Listar camiões");
+        botaoLateral4.setFocusPainted(false);
+        botaoLateral4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral4ActionPerformed(evt);
+            }
+        });
+        botaoLateral5 = new javax.swing.JButton();
+        botaoLateral5.setText("Listar carrinhas");
+        botaoLateral5.setFocusPainted(false);
+        botaoLateral5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral5ActionPerformed(evt);
+            }
+        });
+        botaoLateral6 = new javax.swing.JButton();
+        botaoLateral6.setText("Carregamentos");
+        botaoLateral6.setFocusPainted(false);
+        botaoLateral6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral6ActionPerformed(evt);
+            }
+        });
+        botaoLateral7 = new javax.swing.JButton();
+        botaoLateral7.setText("Por proprietário");
+        botaoLateral7.setFocusPainted(false);
+        botaoLateral7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral7ActionPerformed(evt);
+            }
+        });
+        botaoLateral8 = new javax.swing.JButton();
+        botaoLateral8.setText("Total por veículo");
+        botaoLateral8.setFocusPainted(false);
+        botaoLateral8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLateral8ActionPerformed(evt);
+            }
+        });
+        painelBotoes = new javax.swing.JPanel();
+        painelBotoes.setOpaque(false);
+        painelBotoes.setLayout(new java.awt.GridLayout(0, 1, 8, 8));
+        painelBotoes.add(botaoLateral0);
+        painelBotoes.add(botaoLateral1);
+        painelBotoes.add(botaoLateral2);
+        painelBotoes.add(botaoLateral3);
+        painelBotoes.add(botaoLateral4);
+        painelBotoes.add(botaoLateral5);
+        painelBotoes.add(botaoLateral6);
+        painelBotoes.add(botaoLateral7);
+        painelBotoes.add(botaoLateral8);
+        contentorBotoes = new javax.swing.JPanel();
+        contentorBotoes.setOpaque(false);
+        contentorBotoes.setLayout(new java.awt.BorderLayout());
+        contentorBotoes.add(painelBotoes, java.awt.BorderLayout.NORTH);
+        painelEsquerdo = new javax.swing.JPanel();
+        painelEsquerdo.setBackground(new java.awt.Color(18, 52, 86));
+        painelEsquerdo.setPreferredSize(new java.awt.Dimension(250, 0));
+        painelEsquerdo.setLayout(new java.awt.BorderLayout());
+        painelEsquerdo.add(rotuloMarca, java.awt.BorderLayout.NORTH);
+        painelEsquerdo.add(contentorBotoes, java.awt.BorderLayout.CENTER);
+        rotuloTitulo = new javax.swing.JLabel();
+        rotuloTitulo.setText("Listagem");
+        tabela = new javax.swing.JTable();
+        tabela.setRowHeight(24);
+        rolagemTabela = new javax.swing.JScrollPane();
+        rolagemTabela.setViewportView(tabela);
+        painelCentro = new javax.swing.JPanel();
+        painelCentro.setLayout(new java.awt.BorderLayout());
+        painelCentro.add(rotuloTitulo, java.awt.BorderLayout.NORTH);
+        painelCentro.add(rolagemTabela, java.awt.BorderLayout.CENTER);
+        rotuloEstado = new javax.swing.JLabel();
+        rotuloEstado.setText("Pronto. Os dados são gravados em ficheiros de objectos na pasta dados/");
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("TransCarga Moçambique");
+        getContentPane().setLayout(new java.awt.BorderLayout());
+        getContentPane().add(painelEsquerdo, java.awt.BorderLayout.WEST);
+        getContentPane().add(painelCentro, java.awt.BorderLayout.CENTER);
+        getContentPane().add(rotuloEstado, java.awt.BorderLayout.SOUTH);
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
-    private JPanel criarPainelCentro() {
-        JPanel centro = new JPanel(new BorderLayout());
-        centro.add(rotuloTitulo, BorderLayout.NORTH);
-        centro.add(new JScrollPane(tabela), BorderLayout.CENTER);
-        return centro;
-    }
+    private void menuCadastroItem0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCadastroItem0ActionPerformed
+        dialogoProprietario(false);
+    }//GEN-LAST:event_menuCadastroItem0ActionPerformed
+
+    private void menuCadastroItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCadastroItem1ActionPerformed
+        dialogoVeiculo();
+    }//GEN-LAST:event_menuCadastroItem1ActionPerformed
+
+    private void menuCadastroItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCadastroItem2ActionPerformed
+        dialogoCliente();
+    }//GEN-LAST:event_menuCadastroItem2ActionPerformed
+
+    private void menuCadastroItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCadastroItem3ActionPerformed
+        dialogoCarregamento();
+    }//GEN-LAST:event_menuCadastroItem3ActionPerformed
+
+    private void menuActualizarItem0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActualizarItem0ActionPerformed
+        dialogoProprietario(true);
+    }//GEN-LAST:event_menuActualizarItem0ActionPerformed
+
+    private void menuActualizarItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActualizarItem1ActionPerformed
+        dialogoActualizarVeiculo();
+    }//GEN-LAST:event_menuActualizarItem1ActionPerformed
+
+    private void menuListagensItem0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListagensItem0ActionPerformed
+        listarProprietarios();
+    }//GEN-LAST:event_menuListagensItem0ActionPerformed
+
+    private void menuListagensItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListagensItem1ActionPerformed
+        listarCamioes();
+    }//GEN-LAST:event_menuListagensItem1ActionPerformed
+
+    private void menuListagensItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListagensItem2ActionPerformed
+        listarCarrinhas();
+    }//GEN-LAST:event_menuListagensItem2ActionPerformed
+
+    private void menuListagensItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListagensItem3ActionPerformed
+        listarClientes();
+    }//GEN-LAST:event_menuListagensItem3ActionPerformed
+
+    private void menuListagensItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListagensItem4ActionPerformed
+        listarCarregamentos();
+    }//GEN-LAST:event_menuListagensItem4ActionPerformed
+
+    private void menuListagensItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListagensItem5ActionPerformed
+        listarPorProprietario();
+    }//GEN-LAST:event_menuListagensItem5ActionPerformed
+
+    private void menuListagensItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListagensItem6ActionPerformed
+        consultarTotalVeiculo();
+    }//GEN-LAST:event_menuListagensItem6ActionPerformed
+
+    private void botaoLateral0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral0ActionPerformed
+        dialogoProprietario(false);
+    }//GEN-LAST:event_botaoLateral0ActionPerformed
+
+    private void botaoLateral1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral1ActionPerformed
+        dialogoVeiculo();
+    }//GEN-LAST:event_botaoLateral1ActionPerformed
+
+    private void botaoLateral2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral2ActionPerformed
+        dialogoCliente();
+    }//GEN-LAST:event_botaoLateral2ActionPerformed
+
+    private void botaoLateral3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral3ActionPerformed
+        dialogoCarregamento();
+    }//GEN-LAST:event_botaoLateral3ActionPerformed
+
+    private void botaoLateral4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral4ActionPerformed
+        listarCamioes();
+    }//GEN-LAST:event_botaoLateral4ActionPerformed
+
+    private void botaoLateral5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral5ActionPerformed
+        listarCarrinhas();
+    }//GEN-LAST:event_botaoLateral5ActionPerformed
+
+    private void botaoLateral6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral6ActionPerformed
+        listarCarregamentos();
+    }//GEN-LAST:event_botaoLateral6ActionPerformed
+
+    private void botaoLateral7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral7ActionPerformed
+        listarPorProprietario();
+    }//GEN-LAST:event_botaoLateral7ActionPerformed
+
+    private void botaoLateral8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLateral8ActionPerformed
+        consultarTotalVeiculo();
+    }//GEN-LAST:event_botaoLateral8ActionPerformed
 
     private void dialogoProprietario(final boolean actualizar) {
         JTextField nome = new JTextField();
@@ -591,4 +713,41 @@ public class TelaPrincipal extends JFrame {
             }
         });
     }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botaoLateral0;
+    private javax.swing.JButton botaoLateral1;
+    private javax.swing.JButton botaoLateral2;
+    private javax.swing.JButton botaoLateral3;
+    private javax.swing.JButton botaoLateral4;
+    private javax.swing.JButton botaoLateral5;
+    private javax.swing.JButton botaoLateral6;
+    private javax.swing.JButton botaoLateral7;
+    private javax.swing.JButton botaoLateral8;
+    private javax.swing.JLabel rotuloEstado;
+    private javax.swing.JLabel rotuloMarca;
+    private javax.swing.JLabel rotuloTitulo;
+    private javax.swing.JMenu menuActualizar;
+    private javax.swing.JMenu menuCadastro;
+    private javax.swing.JMenu menuListagens;
+    private javax.swing.JMenuBar barraMenu;
+    private javax.swing.JMenuItem menuActualizarItem0;
+    private javax.swing.JMenuItem menuActualizarItem1;
+    private javax.swing.JMenuItem menuCadastroItem0;
+    private javax.swing.JMenuItem menuCadastroItem1;
+    private javax.swing.JMenuItem menuCadastroItem2;
+    private javax.swing.JMenuItem menuCadastroItem3;
+    private javax.swing.JMenuItem menuListagensItem0;
+    private javax.swing.JMenuItem menuListagensItem1;
+    private javax.swing.JMenuItem menuListagensItem2;
+    private javax.swing.JMenuItem menuListagensItem3;
+    private javax.swing.JMenuItem menuListagensItem4;
+    private javax.swing.JMenuItem menuListagensItem5;
+    private javax.swing.JMenuItem menuListagensItem6;
+    private javax.swing.JPanel contentorBotoes;
+    private javax.swing.JPanel painelBotoes;
+    private javax.swing.JPanel painelCentro;
+    private javax.swing.JPanel painelEsquerdo;
+    private javax.swing.JScrollPane rolagemTabela;
+    private javax.swing.JTable tabela;
+    // End of variables declaration//GEN-END:variables
 }
